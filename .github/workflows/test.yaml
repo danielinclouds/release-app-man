@@ -1,0 +1,38 @@
+name: Test
+
+on:
+  push:
+    branches-ignore:
+      - master
+    paths-ignore:
+      - '**/README.md'
+      - '.github/**'
+
+
+jobs:
+  audit_and_test:
+    runs-on: ubuntu-latest
+    steps:
+
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    - name: Set up Go
+      uses: actions/setup-go@v2
+      with:
+        go-version: 1.16
+
+    - name: Install staticcheck
+      env:
+        GH_URL: https://github.com/dominikh/go-tools/releases/download/2021.1/staticcheck_linux_amd64.tar.gz
+      run: |
+        cd /tmp && curl -sfL -o staticcheck_linux_amd64.tar.gz "${GH_URL}"
+        tar xf staticcheck_linux_amd64.tar.gz && sudo mv staticcheck/staticcheck /usr/local/bin/
+
+    - name: Test
+      run: |
+        make test
+    
+    - name: Audit
+      run: |
+        make audit_helper

@@ -1,0 +1,26 @@
+# PR should have below prefix in title:
+# - fix:
+# - feat:
+# - fix!:
+# - feat!:
+
+name: Status check
+
+on:
+  pull_request
+
+jobs:
+  check_pr_title:
+    runs-on: ubuntu-latest
+    steps:
+
+    - name: Check PR Title
+      env:
+        GITHUB_CONTEXT: ${{ toJson(github) }}
+      run: |
+        TITLE=$(echo "$GITHUB_CONTEXT" | jq -r .event.pull_request.title)
+
+        echo "$TITLE" | grep -i '^fix:' \
+          || echo "$TITLE" | grep -i '^feat:' \
+          || echo "$TITLE" | grep -i '^fix!:' \
+          || echo "$TITLE" | grep -i '^feat!:'
