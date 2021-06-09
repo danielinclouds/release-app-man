@@ -7,7 +7,12 @@
 name: Status check
 
 on:
-  pull_request
+  pull_request:
+    types: 
+    - edited
+    - opened
+    - synchronize
+    - reopened
 
 jobs:
   check_pr_title:
